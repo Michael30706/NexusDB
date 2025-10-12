@@ -30,8 +30,7 @@ void Database::createTable(const std::string& name, const std::vector<Column>& c
 	fullName += ".bin";
 	if (!checkTypes(columns)) throw std::exception();
 	tables[table.name] = table;
-	Storage::saveTable(fullName, table, "data");
-
+	Storage::saveTable(fullName, table);
 }
 
 void Database::insertInto(const std::string& table, const std::vector<std::string>& values)

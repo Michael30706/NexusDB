@@ -18,7 +18,7 @@ std::vector<Column> Storage::getColumns(std::fstream& file)
         if (Database::types.find(str) != Database::types.end())
         {
             types.push_back(str);
-            i += 15;
+            i += DB_CONST_LEN;
         }
     }
 
@@ -61,22 +61,22 @@ void Storage::saveTable(const std::string& path, const Table& table, const std::
         throw std::runtime_error("Failed to open file: " + path);
     }
 
-    // std::vector<Column> cols = getColumns(file);
-    // if (cols.size()) throw std::exception();
+    std::fstream fileReader(path, std::ios::in | std::ios::out | std::ios::binary);
+    std::vector<Column> cols = getColumns(fileReader);
+    if (cols.size()) throw std::exception();
 
+    fileReader.close();
 
     file.seekp(0);
 
     auto writeWithPadding = [&file](const std::string& str) {
-        // write actual string bytes first
         file.write(str.c_str(), str.size());
 
-        // pad remaining bytes with zeros
         char zero = 0;
         for (size_t i = str.size(); i < DB_CONST_LEN; ++i) {
             file.write(&zero, 1);
         }
-        };
+    };
 
     writeWithPadding(table.name);
 
