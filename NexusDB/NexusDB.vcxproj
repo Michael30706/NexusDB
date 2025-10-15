@@ -139,6 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="database.h" />
+    <ClInclude Include="helpers.hpp" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="storage.h" />
     <ClInclude Include="table.h" />

@@ -2,12 +2,17 @@
 #include <string>
 #include "parser.h"
 
+
 int main()
 {
-	std::cout << "Welcome to Nexus database engine!" << std::endl;
 
 	Database db = Database();
+	db.loadFromDisk();
+
 	Parser parser = Parser(&db);
+
+
+	std::cout << "Welcome to Nexus database engine!" << std::endl;
 
 	while (true)
 	{

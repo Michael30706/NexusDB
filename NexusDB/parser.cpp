@@ -1,34 +1,9 @@
 #include "parser.h"
+#include "storage.h"
 #include <algorithm>
 #include <cctype>
+#include <fstream>
 
-bool isAlphaString(const std::string& s) {
-    return !s.empty() && std::all_of(s.begin(), s.end(), [](unsigned char c) {
-        return std::isalpha(c);
-        });
-}
-
-std::string toUpperCopy(const std::string& s) {
-    std::string result = s;
-    std::transform(result.begin(), result.end(), result.begin(),
-        [](unsigned char c) { return std::toupper(c); });
-    return result;
-}
-
-std::vector<std::string> split(std::string s, std::string delimiter) {
-    size_t pos_start = 0, pos_end, delim_len = delimiter.length();
-    std::string token;
-    std::vector<std::string> res;
-
-    while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
-        token = s.substr(pos_start, pos_end - pos_start);
-        pos_start = pos_end + delim_len;
-        res.push_back(token);
-    }
-
-    res.push_back(s.substr(pos_start));
-    return res;
-}
 
 Parser::Parser(Database* db) : _db(db)
 {
@@ -66,8 +41,30 @@ std::string Parser::handleCommand(const std::string& command)
 
             _db->createTable(name, columns);
         }
+        else if (toUpperCopy(keyWords.at(0)) == "INSERT" && toUpperCopy(keyWords.at(1)) == "INTO")
+        {
+            std::string table = keyWords.at(2);
+            std::map<std::string, Cell> cells = std::map<std::string, Cell>();
+            for (int i = 3; i < keyWords.size(); i++)
+            {
+                std::vector<std::string> kvps = split(keyWords[i], "=");
+
+                std::string col = kvps[0];
+                std::string val = kvps[1];
+
+                Cell cell;
+                cell.column = col;
+                cell.value = val;
+
+                cells.insert({cell.column, cell});
+            }
+            _db->insertInto(table, cells);
+
+        }
         else
         {
+            Table table = _db->getTable(command);
+            table.display();
             throw std::exception();
         }
     }

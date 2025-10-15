@@ -3,12 +3,15 @@
 #include <vector>
 #include "database.h"
 #include <unordered_set>
+#include <unordered_map>
 
 class Storage {
 public:
-    //static
+    static std::unordered_map<std::string, int> typeSizes;
     static std::vector<Column> getColumns(std::fstream& file);
+    static std::vector<std::vector<Cell>> getRows(std::fstream& file, std::vector<Column>& columns);
     static std::string read(std::fstream& file, int loc, int bytes);
+    static void InsertRow(const Table& table, const std::vector<Cell>& row);
     // Save a table to disk
     static void saveTable(const std::string& path, const Table& table, const std::string& folder = "data");
 

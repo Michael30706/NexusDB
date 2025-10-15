@@ -6,12 +6,19 @@ struct Column {
     std::string type; // "INT" or "STRING"
 };
 
+struct Cell
+{
+    std::string column;
+    std::string value;
+};
+
+
 class Table {
 public:
     std::string name;
     std::vector<Column> columns;
-    std::vector<std::vector<std::string>> rows;
+    std::vector<std::vector<Cell>> rows;
 
-    void insertRow(const std::vector<std::string>& values);
+    void insertRow(const std::vector<Cell>& values);
     void display() const;
 };
