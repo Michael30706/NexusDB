@@ -30,6 +30,13 @@ inline std::string toUpperCopy(const std::string& s) {
     return result;
 }
 
+inline std::string toLowerCopy(const std::string& s) {
+    std::string result = s;
+    std::transform(result.begin(), result.end(), result.begin(),
+        [](unsigned char c) { return std::tolower(c); });
+    return result;
+}
+
 inline std::vector<std::string> split(std::string s, std::string delimiter) {
     size_t pos_start = 0, pos_end, delim_len = delimiter.length();
     std::string token;

@@ -29,3 +29,14 @@ void Table::display() const
 	}
 
 }
+
+
+bool Column::operator==(const Column& other) const
+{
+	return this->name == other.name;
+}
+
+bool Cell::operator==(const Cell& other) const
+{
+	return this->column == other.column && this->value == other.value;
+}
