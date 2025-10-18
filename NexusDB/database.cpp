@@ -4,7 +4,7 @@
 #include <algorithm>
 
 
-std::unordered_set<std::string> Database::types = { "int", "string" };
+std::unordered_set<std::string> Database::types = { "int", "string", "ApexInt"};
 
 bool Database::checkTypes(const std::vector<Column>& columns)
 {
@@ -41,14 +41,37 @@ void Database::createTable(const std::string& name, const std::vector<Column>& c
 
 void Database::insertInto(const std::string& table, std::map<std::string, Cell>& values)
 {
+	std::vector<Cell> lastRow;
+	if (!tables[table].rows.empty()) lastRow = tables[table].rows.back();
+
 	if (tables.find(table) == tables.end()) throw std::exception();
 	std::vector<Cell> paddedValues = std::vector<Cell>();
-	for (auto& col : tables[table].columns)
+	for (auto& col : tables[table].columns) 
 	{
 		Cell cell;
 		cell.column = col.name;
 		cell.value = (values.find(col.name) != values.end()? values[col.name].value : "");
-		if (col.type != "string" && cell.value == "") cell.value = "0";
+
+		if (col.type == "int" && cell.value == "") cell.value = "1";
+		else if (col.type == "ApexInt")
+		{
+			if (!lastRow.empty()) 
+			{ 
+				auto it = std::find_if(lastRow.begin(), lastRow.end(), [&](const Cell& c) { return c.column == cell.column; }); 
+				if (it != lastRow.end()) 
+				{ 
+					cell.value = std::to_string(std::stoi(it->value) + 1); 
+				} 
+				else 
+				{ 
+					cell.value = "1";
+				}
+			}
+			else {  
+				cell.value = "1";  
+			}
+
+		}
 		paddedValues.push_back(cell);
 	}
 	tables[table].insertRow(paddedValues);

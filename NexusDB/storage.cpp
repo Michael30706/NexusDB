@@ -6,7 +6,7 @@
 # define MAX_STRING_LEN 60
 # define INT_LEN 4
 
-std::unordered_map<std::string, int> Storage::typeSizes = { {"int", INT_LEN}, {"string", MAX_STRING_LEN}};
+std::unordered_map<std::string, int> Storage::typeSizes = { {"int", INT_LEN}, {"string", MAX_STRING_LEN}, {"ApexInt", INT_LEN} };
 
 std::vector<Column> Storage::getColumns(std::fstream& file)
 {
@@ -74,7 +74,7 @@ std::vector<std::vector<Cell>> Storage::getRows(std::fstream& file, std::vector<
         cell.column = columns[colIndex].name;
         if (columns[colIndex].type == "string")
             cell.value = value;
-        else if (columns[colIndex].type == "int")
+        else if (columns[colIndex].type == "int" || columns[colIndex].type == "ApexInt")
         {
             int integer;
             std::memcpy(&integer, value.c_str(), sizeof(integer));
@@ -127,7 +127,7 @@ void Storage::InsertRow(const Table& table, const std::vector<Cell>& row)
         {
             writeWithPadding(row[i].value, typeSizes[currType]);
         }
-        else if (currType == "int")
+        else if (currType == "int" || currType == "ApexInt")
         {
             // Option A: store as raw binary (fast, but watch endianness)
             int32_t value = std::stoi(row[i].value);
